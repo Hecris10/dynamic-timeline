@@ -1,25 +1,8 @@
 import { addDays, differenceInDays, parseISO } from "date-fns";
-import React from "react";
 import { useDragLayer } from "react-dnd";
+import { CustomDragLayerProps } from "../types";
 
-interface TimelineItemData {
-  id: number;
-  start: string;
-  end: string;
-  name: string;
-}
-
-interface CustomDragLayerProps {
-  minDate: Date;
-  totalDays: number;
-  rows: TimelineItemData[][];
-}
-
-const CustomDragLayer: React.FC<CustomDragLayerProps> = ({
-  minDate,
-
-  rows,
-}) => {
+export const useCustomDragLayer = ({ minDate, rows }: CustomDragLayerProps) => {
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     itemType: monitor.getItemType(),
@@ -27,17 +10,19 @@ const CustomDragLayer: React.FC<CustomDragLayerProps> = ({
     currentOffset: monitor.getClientOffset(),
   }));
 
-  if (!isDragging || !currentOffset || !item) {
-    return null;
-  }
-
   const gridStartX =
     document.querySelector(".timeline-grid")?.getBoundingClientRect().left || 0;
-  const adjustedX = currentOffset.x - gridStartX;
+  const adjustedX = (currentOffset?.x || 0) - gridStartX;
 
   const daysToMove = Math.floor(adjustedX / 100); // Use Math.floor for better precision
-  const potentialStart = addDays(parseISO(item.start), daysToMove);
-  const potentialEnd = addDays(parseISO(item.end), daysToMove);
+  const potentialStart =
+    item?.start && daysToMove
+      ? addDays(parseISO(item.start), daysToMove)
+      : new Date();
+  const potentialEnd =
+    item?.end && daysToMove
+      ? addDays(parseISO(item.end), daysToMove)
+      : new Date();
   const startDayIndex = differenceInDays(potentialStart, minDate);
   const spanDays = differenceInDays(potentialEnd, potentialStart) + 1;
 
@@ -62,17 +47,12 @@ const CustomDragLayer: React.FC<CustomDragLayerProps> = ({
     }
   }
 
-  return (
-    <div
-      className="bg-[#007bff4d] border-2 border-dashed border-[#007bff] rounded-lg"
-      style={{
-        gridColumnStart: startDayIndex + 1,
-        gridColumnEnd: `span ${spanDays}`,
-        gridRowStart: rowIndex + 1,
-        pointerEvents: "none", // Ensure it doesn't interfere with dragging
-      }}
-    />
-  );
+  return {
+    startDayIndex,
+    spanDays,
+    rowIndex,
+    isDragging,
+    currentOffset,
+    item,
+  };
 };
-
-export default CustomDragLayer;

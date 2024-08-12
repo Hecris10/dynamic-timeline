@@ -7,7 +7,10 @@ import {
   startOfMonth,
 } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import { NewTimelineItem, TimelineItemData } from "../components/TimeLine";
+import {
+  NewTimelineItem,
+  TimelineItemData,
+} from "../components/TimeLine/types";
 
 // Helper function to convert date to days since a reference date
 export const dateToDays = (date: string) => {

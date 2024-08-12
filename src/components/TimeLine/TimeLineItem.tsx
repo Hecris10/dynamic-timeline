@@ -1,9 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useDrag } from "react-dnd";
 import { HiDotsVertical, HiPencil } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
-import { cn, formatDate, getRandomColor } from "../../lib/utils";
-import { TimelineItemData } from "../TimeLine";
+
+import { cn, formatDate } from "../../lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,56 +17,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-
-interface TimelineItemProps {
-  item: TimelineItemData;
-
-  updateItem: (updatedItem: TimelineItemData) => void;
-  deleteItem: (deletedItem: TimelineItemData) => void;
-}
+import { useTimeLineItem } from "./hooks/useTTimeLineItem";
+import { TimelineItemProps } from "./types";
 
 const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
-  const [, drag] = useDrag(() => ({
-    type: "timeline-item",
-    item,
-  }));
-  const inputNameRef = useRef<HTMLInputElement>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const bgColor = useMemo(() => getRandomColor(), []);
-  useEffect(() => {
-    if (isEditing) {
-      setTimeout(() => {
-        inputNameRef.current?.focus();
-      }, 2000);
-    }
-  }, [isEditing]);
-
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleDelete = () => {
-    deleteItem(item);
-  };
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
-    const startDate = (form.elements.namedItem("startDate") as HTMLInputElement)
-      .value;
-    const endDate = (form.elements.namedItem("endDate") as HTMLInputElement)
-      .value;
-
-    setIsEditing(false);
-    console.log({ name, startDate, endDate });
-    updateItem({
-      ...item,
-      name,
-      start: new Date(startDate).toISOString(),
-      end: new Date(endDate).toISOString(),
-    });
-  };
+  const {
+    drag,
+    inputNameRef,
+    isEditing,
+    bgColor,
+    handleEditClick,
+    handleDelete,
+    handleSave,
+  } = useTimeLineItem({ item, updateItem, deleteItem });
 
   return (
     <TooltipProvider>
