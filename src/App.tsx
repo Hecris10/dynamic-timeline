@@ -1,9 +1,32 @@
+import { useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import "./App.css";
-import TimeLine from "./components/TimeLine";
-import items from "./timelineItems";
+import Timeline, { TimelineItemData } from "./components/TimeLine";
+import timeLineItems from "./timelineItems";
 
 function App() {
-  return <TimeLine events={items} />;
+  const [items, setItems] = useState(timeLineItems);
+
+  const handleDrop = (
+    item: TimelineItemData,
+    newStart: string,
+    newEnd: string
+  ) => {
+    setItems((prevItems) =>
+      prevItems.map((i) =>
+        i.id === item.id ? { ...i, start: newStart, end: newEnd } : i
+      )
+    );
+  };
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <div className="App">
+        <Timeline items={items} onDrop={handleDrop} />
+      </div>
+    </DndProvider>
+  );
 }
 
 export default App;
