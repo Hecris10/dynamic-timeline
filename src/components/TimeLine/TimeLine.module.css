@@ -1,0 +1,89 @@
+.timelineContainer {
+  position: relative; /* Ensure the container is positioned relative for absolute positioning of controls */
+  height: 500px; /* Set a fixed height for the timeline container */
+  overflow: auto;
+  padding: 10px;
+}
+
+.headerBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ccc;
+}
+
+.headerBar h1 {
+  margin: 0;
+}
+
+.headerBar button {
+  padding: 5px 10px;
+  font-size: 16px;
+}
+
+.zoomControls {
+  position: fixed; /* Position the controls absolutely within the container */
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  bottom: 0;
+  right: 0;
+  background: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* Optional: Add a background to make controls more visible */
+  border-radius: 5px; /* Optional: Add some border radius for better appearance */
+}
+
+.zoomControls span {
+  margin: auto 5px;
+}
+
+.zoomControls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+}
+
+.timeline {
+  display: grid;
+  gap: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  /* Enable horizontal scrolling */
+}
+
+.timelineLane {
+  display: grid;
+  gap: 5px;
+}
+
+.timelineEventWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.timelineEventWrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(128, 128, 128, 0.5); /* Gray layer */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.timelineEventWrapper:hover::before {
+  opacity: 1;
+}
