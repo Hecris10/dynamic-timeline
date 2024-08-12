@@ -1,7 +1,6 @@
 import { addDays, differenceInDays, parseISO } from "date-fns";
 import React from "react";
 import { useDragLayer } from "react-dnd";
-import "./CustomDragLayer.css";
 
 interface TimelineItemData {
   id: number;
@@ -65,7 +64,7 @@ const CustomDragLayer: React.FC<CustomDragLayerProps> = ({
 
   return (
     <div
-      className="timeline-placeholder"
+      className="bg-[#007bff4d] border-2 border-dashed border-[#007bff] rounded-lg"
       style={{
         gridColumnStart: startDayIndex + 1,
         gridColumnEnd: `span ${spanDays}`,

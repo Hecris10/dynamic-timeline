@@ -1,10 +1,8 @@
+import { addDays, differenceInDays, parseISO } from "date-fns";
 import React from "react";
 import { useDrop } from "react-dnd";
-
-import { addDays, differenceInDays, parseISO } from "date-fns";
 import CustomDragLayer from "../CustomDragLayer";
 import TimelineItem from "../TimeLineItem";
-import "./Timeline.css";
 
 export interface TimelineItemData {
   id: number;
@@ -85,7 +83,7 @@ const Timeline: React.FC<TimelineProps> = ({ items, onDrop }) => {
   return (
     <div
       ref={drop}
-      className="timeline-grid"
+      className="grid grid-rows-1 gap-3 p-3 overflow-x-auto"
       style={{
         gridTemplateColumns: `repeat(${totalDays}, minmax(100px, 1fr))`,
       }}
@@ -103,7 +101,6 @@ const Timeline: React.FC<TimelineProps> = ({ items, onDrop }) => {
             return (
               <div
                 key={item.id}
-                className="timeline-item"
                 style={{
                   gridColumnStart: startDayIndex + 1,
                   gridColumnEnd: `span ${spanDays}`,
