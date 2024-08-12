@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useDrag } from "react-dnd";
 import { HiDotsVertical, HiPencil } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
@@ -18,11 +19,46 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 
-const TimelineItem = ({ item }: { item: TimelineItemData }) => {
+interface TimelineItemProps {
+  item: TimelineItemData;
+  updateItem: (updatedItem: TimelineItemData) => void;
+  deleteItem: (deletedItem: TimelineItemData) => void;
+}
+
+const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
   const [, drag] = useDrag(() => ({
     type: "timeline-item",
     item,
   }));
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleDelete = () => {
+    deleteItem(item);
+  };
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const startDate = (form.elements.namedItem("startDate") as HTMLInputElement)
+      .value;
+    const endDate = (form.elements.namedItem("endDate") as HTMLInputElement)
+      .value;
+
+    setIsEditing(false);
+    console.log({ name, startDate, endDate });
+    updateItem({
+      ...item,
+      name,
+      start: new Date(startDate).toISOString(),
+      end: new Date(endDate).toISOString(),
+    });
+  };
 
   return (
     <div
@@ -39,11 +75,11 @@ const TimelineItem = ({ item }: { item: TimelineItemData }) => {
           <DropdownMenuContent>
             <DropdownMenuLabel>Options</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2">
+            <DropdownMenuItem className="gap-2" onClick={handleEditClick}>
               <HiPencil className="w-5 h-5" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2">
+            <DropdownMenuItem className="gap-2" onClick={handleDelete}>
               <MdDelete className="w-5 h-5" />
               Delete
             </DropdownMenuItem>
@@ -53,13 +89,47 @@ const TimelineItem = ({ item }: { item: TimelineItemData }) => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            <strong className="inline-block max-w-full overflow-hidden text-ellipsis text-slate-600">
-              {item.name}
-            </strong>
-            <div className="flex flex-wrap gap-2">
-              <p className="m-auto text-center"> {formatDate(item.start)}</p>{" "}
-              <p className="m-auto text-center">{formatDate(item.end)}</p>
-            </div>
+            {isEditing ? (
+              <form onSubmit={handleSave} className="flex flex-col gap-2">
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={item.name}
+                  className="border p-1"
+                  autoFocus
+                />
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    name="startDate"
+                    defaultValue={item.start}
+                    className="border p-1"
+                  />
+                  <input
+                    type="date"
+                    name="endDate"
+                    defaultValue={item.end}
+                    className="border p-1"
+                  />
+                </div>
+                <button type="submit" className="hidden">
+                  Save
+                </button>
+              </form>
+            ) : (
+              <>
+                <strong className="inline-block max-w-full overflow-hidden text-ellipsis text-slate-600">
+                  {item.name}
+                </strong>
+                <div className="flex flex-wrap gap-2">
+                  <p className="m-auto text-center">
+                    {" "}
+                    {formatDate(item.start)}
+                  </p>{" "}
+                  <p className="m-auto text-center">{formatDate(item.end)}</p>
+                </div>
+              </>
+            )}
           </TooltipTrigger>
           <TooltipContent className="bg-slate-100 shadow-lg">
             <div>

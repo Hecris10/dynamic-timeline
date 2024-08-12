@@ -1,5 +1,5 @@
 import { addDays, differenceInDays, parseISO } from "date-fns";
-import React from "react";
+import React, { useState } from "react";
 import { useDrop } from "react-dnd";
 import CustomDragLayer from "../CustomDragLayer";
 import TimelineItem from "../TimeLineItem";
@@ -11,13 +11,21 @@ export interface TimelineItemData {
   name: string;
 }
 
-const Timeline = ({
-  items,
-  onDrop,
-}: {
-  items: TimelineItemData[];
-  onDrop: (item: TimelineItemData, newStart: string, newEnd: string) => void;
-}) => {
+const Timeline = ({ events }: { events: TimelineItemData[] }) => {
+  const [items, setItems] = useState(events);
+
+  const handleDrop = (
+    item: TimelineItemData,
+    newStart: string,
+    newEnd: string
+  ) => {
+    setItems((prevItems) =>
+      prevItems.map((i) =>
+        i.id === item.id ? { ...i, start: newStart, end: newEnd } : i
+      )
+    );
+  };
+
   const [, drop] = useDrop(() => ({
     accept: "timeline-item",
     drop: (draggedItem: TimelineItemData, monitor) => {
@@ -26,7 +34,7 @@ const Timeline = ({
         const daysToMove = Math.floor(delta.x / 100); // Adjust this value to fit your grid
         const newStart = addDays(parseISO(draggedItem.start), daysToMove);
         const newEnd = addDays(parseISO(draggedItem.end), daysToMove);
-        onDrop(
+        handleDrop(
           draggedItem,
           newStart.toISOString().split("T")[0],
           newEnd.toISOString().split("T")[0]
@@ -81,6 +89,20 @@ const Timeline = ({
     }
   });
 
+  const handleUpdateItem = (updatedItem: TimelineItemData) => {
+    const newItems = items.map((item) =>
+      item.id === updatedItem.id ? updatedItem : item
+    );
+    setItems(newItems);
+
+    // Update items
+  };
+
+  const handleDeleteItem = (deletedItem: TimelineItemData) => {
+    const newItems = items.filter((item) => item.id !== deletedItem.id);
+    setItems(newItems);
+  };
+
   return (
     <div
       ref={drop}
@@ -108,7 +130,11 @@ const Timeline = ({
                   gridRowStart: rowIndex + 1,
                 }}
               >
-                <TimelineItem item={item} />
+                <TimelineItem
+                  item={item}
+                  updateItem={handleUpdateItem}
+                  deleteItem={handleDeleteItem}
+                />
               </div>
             );
           })}
