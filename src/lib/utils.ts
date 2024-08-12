@@ -1,3 +1,5 @@
+import clsx, { ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import {
   NewTimeLineEvent,
   TimeLineEvent,
@@ -53,3 +55,7 @@ export const isEventDuplicate = (
       event.name === newEvent.name
   );
 };
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
