@@ -1,5 +1,5 @@
-import NewEventModal from "../Modals/NewEventModal";
-import { NewTimelineItem } from "../TimeLine";
+import NewEventModal from "./NewEventModal";
+import { NewTimelineItem } from "./types";
 
 export const TimeLineHeader = ({
   onSave,
