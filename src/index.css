@@ -67,3 +67,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+button:disabled {
+  opacity: 0.5;
+}
+
+.event-drop-down {
+  @apply duration-300 ease-in-out transform transition-all;
+}
+
+.event-card:hover > .event-drop-down {
+  @apply opacity-100;
+}

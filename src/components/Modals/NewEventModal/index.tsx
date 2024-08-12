@@ -1,17 +1,25 @@
-import { FormEvent } from "react";
-import ReactDOM from "react-dom";
+import { FormEvent, useState } from "react";
 import { NewTimeLineEvent } from "../../TimeLineEvent/TimeLineEvent.types";
-import modalStyles from "../Modals.module.css";
+import { Button } from "../../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 
 export default function NewEventModal({
-  isOpen,
-  onClose,
   onSave,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
   onSave: (event: NewTimeLineEvent) => void;
 }) {
+  const [open, setOpen] = useState(false);
+
   const handleSave = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -20,32 +28,43 @@ export default function NewEventModal({
       start: formData.get("start") as string,
       end: formData.get("end") as string,
     });
+    setOpen(false);
   };
 
-  if (!isOpen) return null;
+  const onOpenChange = (open: boolean) => {
+    setOpen(open);
+  };
 
-  return ReactDOM.createPortal(
-    <div className={modalStyles.modalOverlay}>
-      <form onSubmit={handleSave} className={modalStyles.modalContent}>
-        <h2>Create New Event</h2>
-        <label>
-          Name:
-          <input required type="text" name="name" />
-        </label>
-        <label>
-          Start Date:
-          <input required type="date" name="start" />
-        </label>
-        <label>
-          End Date:
-          <input required type="date" name="end" />
-        </label>
-        <button type="submit">Save</button>
-        <button type="button" onClick={onClose}>
-          Cancel
-        </button>
-      </form>
-    </div>,
-    document.body // Render the modal at the root level
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <Button>New event</Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>New event</DialogTitle>
+          <DialogDescription>
+            Create a new event to add to the timeline.
+          </DialogDescription>
+        </DialogHeader>
+        {open && (
+          <form onSubmit={handleSave}>
+            <Label>Name:</Label>
+            <Input className="mb-2" required type="text" name="name" />
+            <Label>Start Date:</Label>
+            <Input className="mb-2" required type="date" name="start" />
+            <Label>End Date:</Label>
+            <Input className="mb-2" required type="date" name="end" />
+
+            <DialogFooter className="mt-8">
+              <Button className="w-full" type="submit">
+                Save changes
+              </Button>
+            </DialogFooter>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
