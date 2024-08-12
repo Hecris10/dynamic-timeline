@@ -1,0 +1,16 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-lane {
+  display: flex;
+}
+
+.timeline-item {
+  margin: 5px;
+  padding: 10px;
+  background-color: lightblue;
+  border-radius: 5px;
+  cursor: grab;
+}
