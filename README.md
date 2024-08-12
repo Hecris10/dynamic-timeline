@@ -40,8 +40,8 @@ Example:
 ### 1. Clone the repository:
 
 ```console
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/Hecris10/dynamic-timeline.git
+cd dynamic-timeline
 ```
 
 ### 2. Install dependencies:
