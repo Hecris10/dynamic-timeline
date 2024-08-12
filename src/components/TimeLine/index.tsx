@@ -45,15 +45,23 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
             gridTemplateRows: `repeat(${rows.length + 1}, 0.5fr)`,
           }}
         >
-          {monthHeaders.map((header, index) => (
-            <div
-              key={index}
-              className="text-lg font-bold text-center text-gray-700"
-              style={{ gridColumn: `span ${header.startDayIndex}` }}
-            >
-              {header.monthYear}
-            </div>
-          ))}
+          {monthHeaders.map((header, index) => {
+            // Assuming each month spans a fixed number of days (e.g., 30 days)
+            const spanDays = 30;
+
+            return (
+              <div
+                key={index}
+                className="text-lg h-[20px] font-bold text-center text-gray-700"
+                style={{
+                  gridColumn: `${header.startDayIndex + 1} / span ${spanDays}`,
+                  gridRow: 1,
+                }}
+              >
+                {header.monthYear}
+              </div>
+            );
+          })}
 
           <CustomDragLayer minDate={minDate} rows={rows} />
           {Array.from({ length: totalDays }).map((_, index) => (
@@ -79,11 +87,8 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
                   <div
                     key={item.id}
                     style={{
-                      gridColumnStart: startDayIndex + 1,
-                      gridColumnEnd: `span ${spanDays}`,
-                      gridRowStart: rowIndex + 1,
+                      gridColumn: `${startDayIndex + 1} / span ${spanDays}`,
                     }}
-                    className="relative"
                   >
                     <TimelineItem
                       item={item}
