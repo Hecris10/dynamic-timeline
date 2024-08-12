@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import { HiDotsVertical, HiPencil } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
-import { formatDate } from "../../lib/utils";
+import { cn, formatDate, getRandomColor } from "../../lib/utils";
 import { TimelineItemData } from "../TimeLine";
 import {
   DropdownMenu,
@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Input } from "../ui/input";
 import {
   Tooltip,
   TooltipContent,
@@ -21,6 +22,7 @@ import {
 
 interface TimelineItemProps {
   item: TimelineItemData;
+
   updateItem: (updatedItem: TimelineItemData) => void;
   deleteItem: (deletedItem: TimelineItemData) => void;
 }
@@ -30,8 +32,16 @@ const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
     type: "timeline-item",
     item,
   }));
-
+  const inputNameRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (isEditing) {
+      setTimeout(() => {
+        inputNameRef.current?.focus();
+      }, 2000);
+    }
+  }, [isEditing]);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -60,15 +70,20 @@ const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
     });
   };
 
+  const bgColor = getRandomColor();
+
   return (
     <div
       ref={drag}
-      className="flex flex-col gap-1 py-3 px-8 items-center relative justify-center bg-slate-200 shadow-lg rounded-lg cursor-grab  box-border whitespace-nowrap text-ellipsis overflow-hidden"
+      style={{ backgroundColor: bgColor }}
+      className={cn(
+        "inset-0 flex items-center justify-center p-4 px-2 overflow-hidden rounded-lg shadow-lg relateive text-ellipsis whitespace-nowrap"
+      )}
     >
-      <div className="absolute top-2 right-2">
+      <div className="absolute opacity-0 top-2 right-2 event-drop-down">
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>
+          <DropdownMenuTrigger autoFocus={false}>
+            <button type="button" autoFocus={false}>
               <HiDotsVertical />
             </button>
           </DropdownMenuTrigger>
@@ -91,25 +106,26 @@ const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
           <TooltipTrigger>
             {isEditing ? (
               <form onSubmit={handleSave} className="flex flex-col gap-2">
-                <input
+                <Input
+                  ref={inputNameRef}
                   type="text"
                   name="name"
                   defaultValue={item.name}
-                  className="border p-1"
                   autoFocus
+                  className="p-0 font-bold text-center border text-slate-600 bg-slate-200"
                 />
                 <div className="flex gap-2">
-                  <input
+                  <Input
                     type="date"
                     name="startDate"
                     defaultValue={item.start}
-                    className="border p-1"
+                    className="p-0 font-bold text-center border text-slate-600 bg-slate-200"
                   />
-                  <input
+                  <Input
                     type="date"
                     name="endDate"
                     defaultValue={item.end}
-                    className="border p-1"
+                    className="p-0 font-bold text-center border text-slate-600 bg-slate-200"
                   />
                 </div>
                 <button type="submit" className="hidden">
@@ -131,15 +147,15 @@ const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
               </>
             )}
           </TooltipTrigger>
-          <TooltipContent className="bg-slate-100 shadow-lg">
+          <TooltipContent className="shadow-lg bg-slate-100">
             <div>
-              <p className="text-ellipsis text-black font-bold">
+              <p className="font-bold text-black text-ellipsis">
                 {" "}
                 {item.name}{" "}
               </p>
               <div className="flex flex-wrap gap-1 text-slate-700">
                 <p> {formatDate(item.start)} </p>
-                <p className="text-center m-auto">-</p>{" "}
+                <p className="m-auto text-center">-</p>{" "}
                 <p> {formatDate(item.end)} </p>
               </div>
             </div>

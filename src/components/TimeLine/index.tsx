@@ -138,11 +138,21 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
             gridTemplateColumns: `repeat(${totalDays}, minmax(100px, 1fr))`,
           }}
         >
+          {Array.from({ length: totalDays }).map((_, index) => (
+            <div
+              key={index}
+              className="text-sm text-center text-gray-500"
+              style={{ gridColumn: index + 1 }}
+            >
+              {addDays(minDate, index).toLocaleDateString()}
+            </div>
+          ))}
           <CustomDragLayer
             minDate={minDate}
             totalDays={totalDays}
             rows={rows}
           />
+
           {rows.map((row, rowIndex) => (
             <React.Fragment key={rowIndex}>
               {row.map((item) => {
@@ -161,6 +171,7 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
                       gridColumnEnd: `span ${spanDays}`,
                       gridRowStart: rowIndex + 1,
                     }}
+                    className="relative"
                   >
                     <TimelineItem
                       item={item}
