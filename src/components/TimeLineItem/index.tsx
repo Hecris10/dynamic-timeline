@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import { HiDotsVertical, HiPencil } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
@@ -34,7 +34,7 @@ const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
   }));
   const inputNameRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
-
+  const bgColor = useMemo(() => getRandomColor(), []);
   useEffect(() => {
     if (isEditing) {
       setTimeout(() => {
@@ -70,8 +70,6 @@ const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
     });
   };
 
-  const bgColor = getRandomColor();
-
   return (
     <TooltipProvider>
       <Tooltip>
@@ -80,10 +78,10 @@ const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
             ref={drag}
             style={{ backgroundColor: bgColor }}
             className={cn(
-              "w-full h-full inset-0 flex items-center justify-center p-4 px-2 overflow-hidden rounded-lg shadow-lg relateive text-ellipsis whitespace-nowrap"
+              "w-full h-full inset-0 flex items-center justify-center p-4 px-2 overflow-hidden rounded-lg shadow-lg relative text-ellipsis whitespace-nowrap event-card"
             )}
           >
-            <div className="absolute w-full h-full opacity-0 top-2 right-2 event-drop-down">
+            <div className="absolute opacity-0 top-2 right-2 event-drop-down">
               <DropdownMenu>
                 <DropdownMenuTrigger autoFocus={false}>
                   <button type="button" autoFocus={false}>
@@ -138,10 +136,10 @@ const TimelineItem = ({ item, updateItem, deleteItem }: TimelineItemProps) => {
               </form>
             ) : (
               <div className="flex flex-col w-full h-full">
-                <strong className="inline-block max-w-full mx-auto overflow-hidden text-xl text-center text-ellipsis text-slate-600">
+                <strong className="inline-block max-w-full mx-auto overflow-hidden text-xl text-center text-ellipsis ">
                   {item.name}
                 </strong>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 text-lg">
                   <p className="m-auto text-center">
                     {" "}
                     {formatDate(item.start)}

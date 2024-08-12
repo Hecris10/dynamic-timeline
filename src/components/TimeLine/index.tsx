@@ -1,10 +1,12 @@
 import { addDays, differenceInDays, parseISO } from "date-fns";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useDrop } from "react-dnd";
 import { generateId, getMonthHeaders } from "../../lib/utils";
 import CustomDragLayer from "../CustomDragLayer";
 import { TimeLineHeader } from "../TimeLineHeader";
 import TimelineItem from "../TimeLineItem";
+import { Button } from "../ui/button";
 
 export interface TimelineItemData {
   id: number;
@@ -25,7 +27,7 @@ export interface TimelineProps {
 
 const Timeline = ({ events }: { events: TimelineItemData[] }) => {
   const [items, setItems] = useState(events);
-
+  const [zoom, setZoom] = useState(1);
   const handleDrop = (
     item: TimelineItemData,
     newStart: string,
@@ -127,17 +129,36 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
     setItems(newItems);
   };
 
+  const zoomIn = () => {
+    if (zoom <= 19) setZoom((prevZoom) => prevZoom + 1);
+  };
+
+  const zoomOut = () => {
+    if (zoom >= 2) setZoom((prevZoom) => prevZoom - 1);
+  };
+
   const monthHeaders = getMonthHeaders(minDate, totalDays);
 
   return (
-    <div>
+    <div className="relative bg-zinc-100">
       <TimeLineHeader onSave={handleNewItem} />
-      <div className="w-full px-6">
+      <div className="absolute flex gap-3 bottom-8 right-2">
+        <Button disabled={zoom >= 20} variant="outline" onClick={zoomIn}>
+          <PlusIcon size={24} />
+        </Button>
+        <Button disabled={zoom <= 1} variant="outline" onClick={zoomOut}>
+          <MinusIcon size={24} />
+        </Button>
+      </div>
+      <div className="w-full overflow-y-auto h-[93vh]  px-6">
         <div
           ref={drop}
-          className="grid grid-rows-1 gap-3 p-3 overflow-x-auto"
+          className="grid grid-rows-1 gap-3 h-[92vh] p-3 overflow-x-auto"
           style={{
-            gridTemplateColumns: `repeat(${totalDays}, minmax(100px, 1fr))`,
+            gridTemplateColumns: `repeat(${totalDays}, minmax(${
+              250 * zoom
+            }px, 1fr))`,
+            gridTemplateRows: `repeat(${rows.length + 1}, 0.5fr)`,
           }}
         >
           {monthHeaders.map((header, index) => (
@@ -149,6 +170,12 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
               {header.monthYear}
             </div>
           ))}
+
+          <CustomDragLayer
+            minDate={minDate}
+            totalDays={totalDays}
+            rows={rows}
+          />
           {Array.from({ length: totalDays }).map((_, index) => (
             <div
               key={index}
@@ -158,12 +185,6 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
               {addDays(minDate, index).toLocaleDateString()}
             </div>
           ))}
-          <CustomDragLayer
-            minDate={minDate}
-            totalDays={totalDays}
-            rows={rows}
-          />
-
           {rows.map((row, rowIndex) => (
             <React.Fragment key={rowIndex}>
               {row.map((item) => {
