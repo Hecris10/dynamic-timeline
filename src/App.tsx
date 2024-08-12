@@ -2,13 +2,17 @@ import { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "./App.css";
-import Timeline from "./components/TimeLine";
+import Timeline, { TimelineItemData } from "./components/TimeLine";
 import timeLineItems from "./timelineItems";
 
 function App() {
   const [items, setItems] = useState(timeLineItems);
 
-  const handleDrop = (item, newStart, newEnd) => {
+  const handleDrop = (
+    item: TimelineItemData,
+    newStart: string,
+    newEnd: string
+  ) => {
     setItems((prevItems) =>
       prevItems.map((i) =>
         i.id === item.id ? { ...i, start: newStart, end: newEnd } : i

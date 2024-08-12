@@ -1,16 +1,21 @@
-.timeline {
-  display: flex;
-  flex-direction: column;
-}
-
-.timeline-lane {
-  display: flex;
+.timeline-grid {
+  display: grid;
+  grid-auto-rows: 50px;
+  gap: 10px;
+  padding: 10px;
+  overflow-x: auto; /* Ensures horizontal scroll if necessary */
 }
 
 .timeline-item {
-  margin: 5px;
-  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: lightblue;
   border-radius: 5px;
   cursor: grab;
+  padding: 10px;
+  box-sizing: border-box;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
