@@ -1,12 +1,12 @@
 import { addDays, differenceInDays, parseISO } from "date-fns";
-import { useState } from "react";
+import { useDeferredValue, useState } from "react";
 import { useDrop } from "react-dnd";
 import { generateId, getMonthHeaders } from "../../../lib/utils";
 import { NewTimelineItem, TimelineItemData } from "../types";
 
 export const useTimeLine = (events: TimelineItemData[]) => {
   const [items, setItems] = useState(events);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(5);
   const handleDrop = (
     item: TimelineItemData,
     newStart: string,
@@ -47,7 +47,7 @@ export const useTimeLine = (events: TimelineItemData[]) => {
   );
   const totalDays = differenceInDays(maxDate, minDate) + 1;
 
-  const rows: TimelineItemData[][] = [];
+  const rows = useDeferredValue<TimelineItemData[][]>([]);
 
   items.forEach((item) => {
     const startDayIndex = differenceInDays(parseISO(item.start), minDate);
