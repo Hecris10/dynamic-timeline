@@ -91,16 +91,22 @@ export default function TimeLine({ events }: { events: TimeLineEvent[] }) {
             }px, 1fr))`,
           }}
         >
-          {lanes.map((lane, laneIndex) => {
-            return lane.map((event, eventIndex) => {
-              const start = new Date(event.start);
-              const end = new Date(event.end);
-              const timelineStart = new Date(sortedItems[0].start);
-              const daysFromStart = Math.ceil(
-                (start - timelineStart) / (1000 * 60 * 60 * 24)
+          {lanes.map((lane: TimeLineEvent[], laneIndex: number) => {
+            return lane.map((event, eventIndex: number) => {
+              const start: Date = new Date(event.start);
+              const end: Date = new Date(event.end);
+              const timelineStart: Date = new Date(sortedItems[0].start);
+
+              const daysFromStart: number = Math.ceil(
+                (start.getTime() - timelineStart.getTime()) /
+                  (1000 * 60 * 60 * 24)
               );
-              const span = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-              const backgroundColor = colors[eventIndex % colors.length]; // Cycle through colors
+              const span: number =
+                Math.ceil(
+                  (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+                ) + 1;
+              const backgroundColor: string =
+                colors[eventIndex % colors.length]; // Cycle through colors
 
               return (
                 <div
