@@ -1,4 +1,11 @@
 import clsx, { ClassValue } from "clsx";
+import {
+  addDays,
+  differenceInDays,
+  endOfMonth,
+  format,
+  startOfMonth,
+} from "date-fns";
 import { twMerge } from "tailwind-merge";
 import { NewTimelineItem, TimelineItemData } from "../components/TimeLine";
 
@@ -70,4 +77,20 @@ export const getRandomColor = () => {
     color += letters[Math.floor(Math.random() * 16)];
   }
   return color;
+};
+
+export const getMonthHeaders = (minDate: Date, totalDays: number) => {
+  const headers = [];
+  let currentDate = minDate;
+  while (differenceInDays(currentDate, addDays(minDate, totalDays)) < 0) {
+    const startOfCurrentMonth = startOfMonth(currentDate);
+    const endOfCurrentMonth = endOfMonth(currentDate);
+    const startDayIndex = differenceInDays(startOfCurrentMonth, minDate);
+    headers.push({
+      startDayIndex,
+      monthYear: format(startOfCurrentMonth, "MMMM yyyy"),
+    });
+    currentDate = addDays(endOfCurrentMonth, 1);
+  }
+  return headers;
 };

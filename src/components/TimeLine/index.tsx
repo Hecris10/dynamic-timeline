@@ -1,7 +1,7 @@
 import { addDays, differenceInDays, parseISO } from "date-fns";
 import React, { useState } from "react";
 import { useDrop } from "react-dnd";
-import { generateId } from "../../lib/utils";
+import { generateId, getMonthHeaders } from "../../lib/utils";
 import CustomDragLayer from "../CustomDragLayer";
 import { TimeLineHeader } from "../TimeLineHeader";
 import TimelineItem from "../TimeLineItem";
@@ -127,6 +127,8 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
     setItems(newItems);
   };
 
+  const monthHeaders = getMonthHeaders(minDate, totalDays);
+
   return (
     <div>
       <TimeLineHeader onSave={handleNewItem} />
@@ -138,6 +140,15 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
             gridTemplateColumns: `repeat(${totalDays}, minmax(100px, 1fr))`,
           }}
         >
+          {monthHeaders.map((header, index) => (
+            <div
+              key={index}
+              className="text-lg font-bold text-center text-gray-700"
+              style={{ gridColumn: `span ${header.startDayIndex}` }}
+            >
+              {header.monthYear}
+            </div>
+          ))}
           {Array.from({ length: totalDays }).map((_, index) => (
             <div
               key={index}
