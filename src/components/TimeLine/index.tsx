@@ -11,12 +11,13 @@ export interface TimelineItemData {
   name: string;
 }
 
-interface TimelineProps {
+const Timeline = ({
+  items,
+  onDrop,
+}: {
   items: TimelineItemData[];
   onDrop: (item: TimelineItemData, newStart: string, newEnd: string) => void;
-}
-
-const Timeline: React.FC<TimelineProps> = ({ items, onDrop }) => {
+}) => {
   const [, drop] = useDrop(() => ({
     accept: "timeline-item",
     drop: (draggedItem: TimelineItemData, monitor) => {
