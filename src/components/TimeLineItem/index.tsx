@@ -1,16 +1,7 @@
-import React from "react";
 import { useDrag } from "react-dnd";
+import { TimelineItemData } from "../TimeLine";
 
-interface TimelineItemProps {
-  item: {
-    id: number;
-    start: string;
-    end: string;
-    name: string;
-  };
-}
-
-const TimelineItem: React.FC<TimelineItemProps> = ({ item }) => {
+const TimelineItem = ({ item }: { item: TimelineItemData }) => {
   const [, drag] = useDrag(() => ({
     type: "timeline-item",
     item,
