@@ -59,3 +59,9 @@ export const isEventDuplicate = (
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export function generateId(events: TimeLineEvent[]): number {
+  const newId = events.length + 1;
+  const isIdNotUnique = events.some((event) => event.id === newId);
+  return isIdNotUnique ? generateId(events) : newId;
+}

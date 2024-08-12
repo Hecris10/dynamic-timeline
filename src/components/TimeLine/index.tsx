@@ -1,7 +1,9 @@
 import { addDays, differenceInDays, parseISO } from "date-fns";
 import React, { useState } from "react";
 import { useDrop } from "react-dnd";
+import { generateId } from "../../lib/utils";
 import CustomDragLayer from "../CustomDragLayer";
+import { TimeLineHeader } from "../TimeLineHeader";
 import TimelineItem from "../TimeLineItem";
 
 export interface TimelineItemData {
@@ -9,6 +11,16 @@ export interface TimelineItemData {
   start: string;
   end: string;
   name: string;
+}
+
+export interface NewTimelineItem {
+  name: string;
+  start: string;
+  end: string;
+}
+
+export interface TimelineProps {
+  events: TimelineItemData[];
 }
 
 const Timeline = ({ events }: { events: TimelineItemData[] }) => {
@@ -94,8 +106,6 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
       item.id === updatedItem.id ? updatedItem : item
     );
     setItems(newItems);
-
-    // Update items
   };
 
   const handleDeleteItem = (deletedItem: TimelineItemData) => {
@@ -103,43 +113,67 @@ const Timeline = ({ events }: { events: TimelineItemData[] }) => {
     setItems(newItems);
   };
 
+  const handleNewItem = (newItem: NewTimelineItem) => {
+    const newId = generateId(items);
+    const newItems = [
+      ...items,
+      {
+        id: newId,
+        start: newItem.start,
+        end: newItem.end,
+        name: newItem.name,
+      },
+    ];
+    setItems(newItems);
+  };
+
   return (
-    <div
-      ref={drop}
-      className="grid grid-rows-1 gap-3 p-3 overflow-x-auto"
-      style={{
-        gridTemplateColumns: `repeat(${totalDays}, minmax(100px, 1fr))`,
-      }}
-    >
-      <CustomDragLayer minDate={minDate} totalDays={totalDays} rows={rows} />
-      {rows.map((row, rowIndex) => (
-        <React.Fragment key={rowIndex}>
-          {row.map((item) => {
-            const startDayIndex = differenceInDays(
-              parseISO(item.start),
-              minDate
-            );
-            const spanDays =
-              differenceInDays(parseISO(item.end), parseISO(item.start)) + 1;
-            return (
-              <div
-                key={item.id}
-                style={{
-                  gridColumnStart: startDayIndex + 1,
-                  gridColumnEnd: `span ${spanDays}`,
-                  gridRowStart: rowIndex + 1,
-                }}
-              >
-                <TimelineItem
-                  item={item}
-                  updateItem={handleUpdateItem}
-                  deleteItem={handleDeleteItem}
-                />
-              </div>
-            );
-          })}
-        </React.Fragment>
-      ))}
+    <div>
+      <TimeLineHeader onSave={handleNewItem} />
+      <div className="w-full px-6">
+        <div
+          ref={drop}
+          className="grid grid-rows-1 gap-3 p-3 overflow-x-auto"
+          style={{
+            gridTemplateColumns: `repeat(${totalDays}, minmax(100px, 1fr))`,
+          }}
+        >
+          <CustomDragLayer
+            minDate={minDate}
+            totalDays={totalDays}
+            rows={rows}
+          />
+          {rows.map((row, rowIndex) => (
+            <React.Fragment key={rowIndex}>
+              {row.map((item) => {
+                const startDayIndex = differenceInDays(
+                  parseISO(item.start),
+                  minDate
+                );
+                const spanDays =
+                  differenceInDays(parseISO(item.end), parseISO(item.start)) +
+                  1;
+                return (
+                  <div
+                    key={item.id}
+                    style={{
+                      gridColumnStart: startDayIndex + 1,
+                      gridColumnEnd: `span ${spanDays}`,
+                      gridRowStart: rowIndex + 1,
+                    }}
+                  >
+                    <TimelineItem
+                      item={item}
+                      updateItem={handleUpdateItem}
+                      deleteItem={handleDeleteItem}
+                    />
+                  </div>
+                );
+              })}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
