@@ -1,9 +1,6 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import {
-  NewTimeLineEvent,
-  TimeLineEvent,
-} from "../components/TimeLineEvent/TimeLineEvent.types";
+import { NewTimelineItem, TimelineItemData } from "../components/TimeLine";
 
 // Helper function to convert date to days since a reference date
 export const dateToDays = (date: string) => {
@@ -22,9 +19,9 @@ export const formatDate = (date: string) => {
 };
 
 // Helper function to arrange events in lanes
-export const arrangeEventsInLanes = (events: TimeLineEvent[]) => {
+export const arrangeEventsInLanes = (events: TimelineItemData[]) => {
   console.log({ events });
-  const lanes: TimeLineEvent[][] = [];
+  const lanes: TimelineItemData[][] = [];
   events?.forEach((event) => {
     const start = event.start;
     const end = event.end;
@@ -45,8 +42,8 @@ export const arrangeEventsInLanes = (events: TimeLineEvent[]) => {
 };
 // Helper function to check if an event is a duplicate
 export const isEventDuplicate = (
-  events: TimeLineEvent[],
-  newEvent: TimeLineEvent | NewTimeLineEvent
+  events: TimelineItemData[],
+  newEvent: TimelineItemData | NewTimelineItem
 ) => {
   return events.some(
     (event) =>
@@ -60,8 +57,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function generateId(events: TimeLineEvent[]): number {
+export function generateId(events: TimelineItemData[]): number {
   const newId = events.length + 1;
   const isIdNotUnique = events.some((event) => event.id === newId);
   return isIdNotUnique ? generateId(events) : newId;
 }
+
+export const getRandomColor = () => {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
